@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,13 +109,36 @@ public class PostService {
     //조회 기능
     //메인화면 게시글 조회
     @Transactional
-    public List<MainPostResponse> getMainPostInfo() {
+    public List<MainPostResponse> getMainRecentPostInfo() {
         List<Post> posts = postRepository.findTop20ByOrderByCreatedAtDesc(PageRequest.of(0, 20));
 
         // Post 엔티티를 PostResponse DTO로 변환
         return posts.stream()
                 .map(MainPostResponse::of)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MainPostResponse> getMainHotPostInfo() {
+        List<Post> posts = postRepository.findAllByOrderByLikeCountDesc(PageRequest.of(0, 20));
+
+        // Post 엔티티를 PostResponse DTO로 변환
+        return posts.stream()
+                .map(MainPostResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MainPostResponse> getMainFollowPostInfo(Long userId) {
+        List<Post> posts = postRepository.findLatestPostsByFollowedUsers(userId);
+
+        // 게시물들을 최신순으로 정렬하고 상위 20개만 반환
+        return posts.stream()
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                .limit(20)
+                .map(MainPostResponse::of)
+                .collect(Collectors.toList());
+
     }
 
     //특정 게시물(선택된 게시물) 조회

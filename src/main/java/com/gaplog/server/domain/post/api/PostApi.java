@@ -76,11 +76,33 @@ public class PostApi {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/")
-    @Operation(summary = "메인 페이지 게시글 조회", description = "메인 페이지에 뜨는 게시글의 정보를 얻습니다.")
-    public ResponseEntity<List<MainPostResponse>> getMainPost() {
+    @GetMapping("/recent")
+    @Operation(summary = "메인 페이지 최근 게시글 조회", description = "메인 페이지에 뜨는 최근 게시글의 정보를 얻습니다.")
+    public ResponseEntity<List<MainPostResponse>> getMainRecentPost() {
         try {
-            List<MainPostResponse> posts = postService.getMainPostInfo();
+            List<MainPostResponse> posts = postService.getMainRecentPostInfo();
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/hot")
+    @Operation(summary = "메인 페이지 인기 게시글 조회", description = "메인 페이지에 뜨는 인기 게시글의 정보를 얻습니다.")
+    public ResponseEntity<List<MainPostResponse>> getMainHotPost() {
+        try {
+            List<MainPostResponse> posts = postService.getMainHotPostInfo();
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/follow/{user_id}")
+    @Operation(summary = "메인 페이지 팔로우하는 유저 게시글 조회", description = "메인 페이지에 뜨는 팔로우하는 유저 게시글의 정보를 얻습니다.")
+    public ResponseEntity<List<MainPostResponse>> getMainFollowPost(@PathVariable("user_id") Long userId) {
+        try {
+            List<MainPostResponse> posts = postService.getMainFollowPostInfo(userId);
             return new ResponseEntity<>(posts, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

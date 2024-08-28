@@ -26,7 +26,7 @@ public class SeriousnessService {
     @Transactional
     public void updateSeriousnessTier(Long userId){
         // 유저의 총 진지버튼 수
-        int totalSeriousnessCount = postRepository.findById(userId).stream().mapToInt(Post::getJinjiCount).sum();
+        int totalSeriousnessCount = postRepository.findById(userId).stream().mapToInt(Post::getSeriousnessCount).sum();
         // 진지 티어 계산
         Seriousness seriousness = seriousnessRepository.findByUserId(userId)
                 .orElseGet(()-> new Seriousness(userRepository.findById(userId).orElseThrow()));
@@ -48,7 +48,7 @@ public class SeriousnessService {
                 .map(entry -> {
                     LocalDate date = entry.getKey();
                     List<Post> postsOnDate = entry.getValue();
-                    int seriousnessCount = postsOnDate.stream().mapToInt(Post::getJinjiCount).sum();
+                    int seriousnessCount = postsOnDate.stream().mapToInt(Post::getSeriousnessCount).sum();
                     int postCount = postsOnDate.size();
                     return new SeriousnessFieldResponse(date, seriousnessCount, postCount);
                 })

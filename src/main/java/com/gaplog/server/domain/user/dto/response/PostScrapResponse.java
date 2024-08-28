@@ -32,7 +32,7 @@ public class PostScrapResponse {
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .likeCount(post.getLikeCount())
-                .seriousnessCount(post.getJinjiCount())
+                .seriousnessCount(post.getSeriousnessCount())
                 .build();
     }
 }
