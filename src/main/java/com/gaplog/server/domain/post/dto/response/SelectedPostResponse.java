@@ -22,6 +22,8 @@ public class SelectedPostResponse {
     private LocalDateTime updatedAt;
     private int likeCount;
     private int jinjiCount;
+    private int scrapCount;
+    private int commentCount;
 
     public static SelectedPostResponse of(Post post) {
         return SelectedPostResponse.builder()
@@ -30,6 +32,8 @@ public class SelectedPostResponse {
                 .content(post.getContent())
                 .likeCount(post.getLikeCount())
                 .jinjiCount(post.getSeriousnessCount())
+                .scrapCount(post.getScrapCount())
+                .commentCount(post.getCommentCount())
                 .createdAt(LocalDateTime.parse(post.getCreatedAt().toString()))
                 .updatedAt(LocalDateTime.parse(post.getUpdatedAt().toString()))
                 .build();

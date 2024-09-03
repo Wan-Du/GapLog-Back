@@ -55,6 +55,9 @@ public class Post {
     private int scrapCount;
 
     @Column
+    private int commentCount;
+
+    @Column
     private boolean isPrivate;
 
     @Column
@@ -100,6 +103,10 @@ public class Post {
         this.scrapCount++;
     }
 
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
     public void decreaseLikeCount() {
         this.likeCount--;
     }
@@ -112,14 +119,14 @@ public class Post {
         this.scrapCount--;
     }
 
+    public void decreaseCommentCount() { this.commentCount--; }
+
 
     public void updateIsPrivate() {
         this.isPrivate = true;
     }
 
-    public void updateIsDeleted() {
-        this.isDeleted = true;
-    }
+    public void updateIsDeleted() { this.isDeleted = true; }
 
     @Builder
     public Post(String title, String content, Category category, String thumbnailUrl, User user) {
@@ -131,6 +138,7 @@ public class Post {
         this.likeCount = 0;
         this.SeriousnessCount = 0;
         this.scrapCount = 0;
+        this.commentCount = 0;
         this.isPrivate = false;
         this.isDeleted = false;
         this.version = 0L;

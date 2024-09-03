@@ -1,6 +1,7 @@
 package com.gaplog.server.domain.post.api;
 
 
+import com.gaplog.server.domain.post.application.PostImageService;
 import com.gaplog.server.domain.post.application.PostService;
 import com.gaplog.server.domain.post.domain.Post;
 import com.gaplog.server.domain.post.dto.request.*;
@@ -8,19 +9,34 @@ import com.gaplog.server.domain.post.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
-@RequiredArgsConstructor
 @Tag(name = "post API", description = "post API")
 public class PostApi {
     private final PostService postService;
+    private final PostImageService postImageService;
 
+    @Autowired
+    public PostApi(PostService postService, PostImageService postImageService) {
+        this.postService = postService;
+        this.postImageService = postImageService;
+    }
+
+    @PostMapping("/upload")
+    public String upload(MultipartFile image) throws IOException {
+        String imageUrl = postImageService.upload(image);
+        //return "<img th:src=\"${"+imageUrl+"}\" alt=\"이미지\"/>";
+        return imageUrl;
+    }
 
     @PutMapping("/")
     @Operation(summary = "게시글 작성", description = "게시글을 작성합니다.")

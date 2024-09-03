@@ -7,6 +7,7 @@ import com.gaplog.server.domain.comment.domain.CommentLike;
 import com.gaplog.server.domain.comment.dto.response.CommentLikeUpdateResponse;
 import com.gaplog.server.domain.comment.dto.response.CommentResponse;
 import com.gaplog.server.domain.comment.dto.response.CommentUpdateResponse;
+import com.gaplog.server.domain.post.application.PostService;
 import com.gaplog.server.domain.post.dao.PostRepository;
 import com.gaplog.server.domain.post.domain.Post;
 import com.gaplog.server.domain.user.dao.UserRepository;
@@ -28,6 +29,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final PostService postService;
 
     @Transactional
     public CommentResponse createComment(Long postId, Long userId, String text, Long parentId) {
@@ -39,6 +41,8 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
         Comment newComment = Comment.of(post, user, text, parentId);
+
+        postService.PostCommentCountUpdate(postId, true);
 
         commentRepository.save(newComment);
         return CommentResponse.of(newComment);
@@ -99,6 +103,7 @@ public class CommentService {
             //case 2 & case 3의 자식 댓글 setDeleted
             comment.setDeleted(true);
             commentRepository.save(comment);
+            postService.PostCommentCountUpdate(comment.getPost().getId(),false);
         }
     }
 

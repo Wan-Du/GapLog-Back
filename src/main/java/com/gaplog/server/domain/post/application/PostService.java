@@ -251,4 +251,20 @@ public class PostService {
         return PostScrapUpdateResponse.of(updatedPost);
     }
 
+    @Transactional
+    public void PostCommentCountUpdate(Long postId, Boolean bool) {
+        Post post = postRepository.findById(postId).orElseThrow(()
+                ->new IllegalArgumentException("Post not found: " + postId));
+        if(bool){
+            post.increaseCommentCount();
+        }
+        else{
+            post.decreaseCommentCount();
+        }
+
+        postRepository.save(post);
+
+        return;
+    }
+
 }
