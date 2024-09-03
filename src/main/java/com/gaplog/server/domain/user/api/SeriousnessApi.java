@@ -28,7 +28,7 @@ public class SeriousnessApi {
         try {
             SeriousnessDto seriousnessDTO = seriousnessService.getSeriousness(userId);
             return ResponseEntity.ok(seriousnessDTO);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

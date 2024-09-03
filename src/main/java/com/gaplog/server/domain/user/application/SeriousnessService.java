@@ -60,7 +60,12 @@ public class SeriousnessService {
         Seriousness seriousness = seriousnessRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
-        return SeriousnessDto.from(seriousness);
+        int totalSeriousnessCount = postRepository.findByUserId(userId)
+                .stream()
+                .mapToInt(Post::getSeriousnessCount)
+                .sum();
+
+        return SeriousnessDto.from(seriousness, totalSeriousnessCount);
     }
 
 }
