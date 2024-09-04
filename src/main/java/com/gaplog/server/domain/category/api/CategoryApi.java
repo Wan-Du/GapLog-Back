@@ -11,11 +11,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//To Do: closure table을 활용한 쿼리 작성
+import static com.gaplog.server.global.util.ApiUtil.getUserIdFromAuthentication;
+
 @RestController
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
@@ -24,9 +28,10 @@ public class CategoryApi {
 
     private final CategoryService categoryService;
 
-    @GetMapping("users/{user_id}")
+    @GetMapping("/users")
     @Operation(summary = "유저 카테고리 조회", description = "유저의 카테고리 정보를 얻습니다.")
-    public ResponseEntity<List<CategoryTreeResponse>> getCategoryTree(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<List<CategoryTreeResponse>> getCategoryTree() {
+        Long userId = getUserIdFromAuthentication();
         List<CategoryTreeResponse> categoryTree = categoryService.getCategoryTree(userId);
         return new ResponseEntity<>(categoryTree, HttpStatus.OK);
     }

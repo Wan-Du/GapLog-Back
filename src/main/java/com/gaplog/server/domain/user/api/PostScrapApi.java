@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.gaplog.server.global.util.ApiUtil.getUserIdFromAuthentication;
+
 @RestController
-@RequestMapping("/api/user/{user_id}/scraps")
+@RequestMapping("/api/user/scraps")
 @RequiredArgsConstructor
 @Tag(name = "Post-scrap", description = "Post-scrap API")
 public class PostScrapApi {
@@ -21,9 +23,9 @@ public class PostScrapApi {
 
     @Operation(summary = "유저가 스크랩한 게시물 조회", description = "유저가 스크랩한 게시물을 조회합니다.")
     @GetMapping
-    public ResponseEntity<List<PostScrapResponse>> getScrapPost(
-            @PathVariable("user_id") Long userId) {
+    public ResponseEntity<List<PostScrapResponse>> getScrapPost() {
         try {
+            Long userId = getUserIdFromAuthentication();
             List<PostScrapResponse> responseDTOs = postScrapService.getScrapPosts(userId);
             return ResponseEntity.ok(responseDTOs);
         } catch (RuntimeException e) {
@@ -31,5 +33,4 @@ public class PostScrapApi {
         }
 
     }
-
 }

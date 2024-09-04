@@ -1,5 +1,7 @@
 package com.gaplog.server.domain.auth.config;
 
+import com.gaplog.server.domain.auth.enhancer.JwtFilter;
+import com.gaplog.server.domain.auth.infra.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,17 +13,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+    private final TokenProvider tokenProvider;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .requestMatchers("/error", "/favicon.ico");
+                .requestMatchers("/h2-console/**","/error", "/favicon.ico");
     }
 
     @Bean
@@ -38,10 +42,11 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests((registry) ->
                         registry
-                                .requestMatchers("/api/**").permitAll() // papi 임시 허용
+                                .requestMatchers("/api/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**", "/webjars/**").permitAll()
                                 .anyRequest().authenticated()
-                );
+                )
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);;
         return http.build();
     }
 }

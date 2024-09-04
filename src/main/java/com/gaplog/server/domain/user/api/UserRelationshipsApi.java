@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.gaplog.server.global.util.ApiUtil.getUserIdFromAuthentication;
+
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -21,9 +23,10 @@ public class UserRelationshipsApi {
     private final UserRelationshipsService userRelationshipsService;
 
     @Operation(summary = "유저의 팔로워 목록 조회", description = "특정 유저를 팔로우 하고 있는 목록을 조회합니다.")
-    @GetMapping("/{user_id}/followers")
-    public ResponseEntity<List<UserRelationshipsDto>> getFollowers(@PathVariable("user_id") Long userId) {
+    @GetMapping("/followers")
+    public ResponseEntity<List<UserRelationshipsDto>> getFollowers() {
         try{
+            Long userId = getUserIdFromAuthentication();
             List<UserRelationshipsDto> followers = userRelationshipsService.getFollowers(userId);
             return ResponseEntity.ok(followers);
         } catch (RuntimeException e){
@@ -32,9 +35,10 @@ public class UserRelationshipsApi {
     }
 
     @Operation(summary = "유저의 팔로우 목록 조회", description = "특정 유저가 팔로우 하고 있는 목록을 조회합니다.")
-    @GetMapping("/{user_id}/followees")
-    public ResponseEntity<List<UserRelationshipsDto>> getFollowees(@PathVariable("user_id") Long userId) {
+    @GetMapping("/followees")
+    public ResponseEntity<List<UserRelationshipsDto>> getFollowees() {
         try{
+            Long userId = getUserIdFromAuthentication();
             List<UserRelationshipsDto> followees = userRelationshipsService.getFollowees(userId);
             return ResponseEntity.ok(followees);
         } catch (RuntimeException e){
@@ -44,14 +48,14 @@ public class UserRelationshipsApi {
     }
 
     @Operation(summary = "유저의 팔로우 목록 수정", description = "유저가 팔로우 하고 있는 목록을 수정합니다.")
-    @PutMapping("/{user_id}/follow")
-    public ResponseEntity<String> updateFollow(@PathVariable("user_id") Long userId,
-     @RequestBody UpdateFollowRequest updateFollowRequestDTO){
+    @PutMapping("/follow")
+    public ResponseEntity<String> updateFollow(@RequestBody UpdateFollowRequest updateFollowRequestDTO){
 
         String action = updateFollowRequestDTO.getAction();
         Long targetId = updateFollowRequestDTO.getTargetId();
 
         try {
+            Long userId = getUserIdFromAuthentication();
             String result = userRelationshipsService.updateFollow(userId, targetId, action);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {

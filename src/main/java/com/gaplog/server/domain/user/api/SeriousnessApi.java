@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.gaplog.server.global.util.ApiUtil.getUserIdFromAuthentication;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user/{user_id}/seriousness")
+@RequestMapping("/api/user/seriousness")
 @Tag(name = "Seriousness", description = "Seriousness API")
 public class SeriousnessApi {
 
@@ -24,8 +26,9 @@ public class SeriousnessApi {
 
     @GetMapping
     @Operation(summary = "유저 진지 티어 조회", description = "유저의 진지 티어 정보를 조회합니다.")
-    public ResponseEntity<SeriousnessDto> getSeriousness(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<SeriousnessDto> getSeriousness() {
         try {
+            Long userId = getUserIdFromAuthentication();
             SeriousnessDto seriousnessDTO = seriousnessService.getSeriousness(userId);
             return ResponseEntity.ok(seriousnessDTO);
         } catch (EntityNotFoundException e) {
@@ -35,15 +38,17 @@ public class SeriousnessApi {
 
     @PutMapping
     @Operation(summary = "유저 티어 업데이트", description = "유저의 진지 버튼 누적 수에 따라 티어를 업데이트합니다.")
-    public ResponseEntity<Void> updateUserTier(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<Void> updateUserTier() {
+        Long userId = getUserIdFromAuthentication();
         seriousnessService.updateSeriousnessTier(userId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/seriousness-field")
     @Operation(summary = "완두밭 데이터 조회", description = "유저가 완두밭 데이터를 조회합니다.")
-    public ResponseEntity<List<SeriousnessFieldResponse>> getSeriousnessFieldData(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<List<SeriousnessFieldResponse>> getSeriousnessFieldData() {
         try {
+            Long userId = getUserIdFromAuthentication();
             List<SeriousnessFieldResponse> seriousnessFieldResponses = seriousnessService.getSeriousnessField(userId);
             return ResponseEntity.ok(seriousnessFieldResponses);
         } catch (EntityNotFoundException e) {
