@@ -38,16 +38,17 @@ public class SeriousnessService {
 
 
     @Transactional(readOnly = true)
-    public List<SeriousnessFieldResponse> getSeriousnessField(Long userId){
-        // 유저가 작성한 포스와 진지 버튼 수 반환 (<- 완두밭 만들기 위해서)
+    public List<SeriousnessFieldResponse> getSeriousnessField(Long userId) {
+        // 유저가 작성한 포스트와 해당 포스트의 진지 버튼 수를 날짜별로 반환
         List<Post> posts = postRepository.findByUserId(userId);
-        Map<LocalDate, List<Post>> postsByDate = posts.stream()
-                .collect(Collectors.groupingBy(post -> post.getCreatedAt().toLocalDate()));
 
-        return postsByDate.entrySet().stream()
+        return posts.stream()
+                .collect(Collectors.groupingBy(post -> post.getCreatedAt().toLocalDate())) // 포스트 작성일 기준 그룹화
+                .entrySet().stream()
                 .map(entry -> {
                     LocalDate date = entry.getKey();
                     List<Post> postsOnDate = entry.getValue();
+                    // 해당 날짜에 작성된 모든 포스트가 받은 진지 버튼 수를 합산
                     int seriousnessCount = postsOnDate.stream().mapToInt(Post::getSeriousnessCount).sum();
                     int postCount = postsOnDate.size();
                     return new SeriousnessFieldResponse(date, seriousnessCount, postCount);
@@ -60,7 +61,12 @@ public class SeriousnessService {
         Seriousness seriousness = seriousnessRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + userId));
 
-        return SeriousnessDto.from(seriousness);
+        int totalSeriousnessCount = postRepository.findByUserId(userId)
+                .stream()
+                .mapToInt(Post::getSeriousnessCount)
+                .sum();
+
+        return SeriousnessDto.from(seriousness, totalSeriousnessCount);
     }
 
 }

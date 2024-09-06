@@ -1,29 +1,23 @@
 package com.gaplog.server.domain.user.dto;
 
+import com.gaplog.server.domain.user.domain.Seriousness;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
-@Builder
 @Getter
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class SeriousnessDto {
-
     private Long seriousnessId;
     private Long userId;
     private int tier;
-    private LocalDate localDate;
+    private int seriousnessCount;
 
-    public static SeriousnessDto from(com.gaplog.server.domain.user.domain.Seriousness seriousness){
-        return SeriousnessDto.builder()
-                .seriousnessId(seriousness.getId())
-                .userId(seriousness.getUser().getId())
-                .tier(seriousness.getTier())
-                .localDate(seriousness.getLocalDate())
-                .build();
+    public static SeriousnessDto from(Seriousness seriousness, int totalSeriousnessCount) {
+        return new SeriousnessDto(
+                seriousness.getId(),
+                seriousness.getUser().getId(),
+                seriousness.getTier(),
+                totalSeriousnessCount
+        );
     }
 }
