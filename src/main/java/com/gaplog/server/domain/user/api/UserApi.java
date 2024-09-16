@@ -50,6 +50,17 @@ public class UserApi {
         }
     }
 
+    @Operation(summary = "특정 유저 정보 조회", description = "특정 유저의 정보를 조회합니다.")
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserWithId(@PathVariable Long userId){
+        try {
+            UserResponse userResponseDTO = userService.getUserInfo(userId);
+            return ResponseEntity.ok(userResponseDTO);
+        } catch (EntityNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @Operation(summary = "유저 탈퇴", description = "유저가 서비스를 탈퇴합니다.")
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(){
