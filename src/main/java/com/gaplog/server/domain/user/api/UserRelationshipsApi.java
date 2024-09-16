@@ -23,10 +23,9 @@ public class UserRelationshipsApi {
     private final UserRelationshipsService userRelationshipsService;
 
     @Operation(summary = "유저의 팔로워 목록 조회", description = "특정 유저를 팔로우 하고 있는 목록을 조회합니다.")
-    @GetMapping("/followers")
-    public ResponseEntity<List<UserRelationshipsDto>> getFollowers() {
+    @GetMapping("/{user_id}/followers")
+    public ResponseEntity<List<UserRelationshipsDto>> getFollowers(@PathVariable("user_id") Long userId) {
         try{
-            Long userId = getUserIdFromAuthentication();
             List<UserRelationshipsDto> followers = userRelationshipsService.getFollowers(userId);
             return ResponseEntity.ok(followers);
         } catch (RuntimeException e){
@@ -35,10 +34,9 @@ public class UserRelationshipsApi {
     }
 
     @Operation(summary = "유저의 팔로우 목록 조회", description = "특정 유저가 팔로우 하고 있는 목록을 조회합니다.")
-    @GetMapping("/followees")
-    public ResponseEntity<List<UserRelationshipsDto>> getFollowees() {
+    @GetMapping("/{user_id}/followees")
+    public ResponseEntity<List<UserRelationshipsDto>> getFollowees(@PathVariable("user_id") Long userId) {
         try{
-            Long userId = getUserIdFromAuthentication();
             List<UserRelationshipsDto> followees = userRelationshipsService.getFollowees(userId);
             return ResponseEntity.ok(followees);
         } catch (RuntimeException e){
